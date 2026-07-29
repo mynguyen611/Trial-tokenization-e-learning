@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
 
 const DV = {
   black:"#09101C", navy:"#112040", navyMd:"#172C56", cobalt:"#1B3490",
@@ -279,6 +280,138 @@ const USE_CASES = [
     ],
   },
 ];
+
+// ── Final Exam questions (10 total · 2 per use case) ──────────────────────────
+// Pass threshold: 80% (8/10). Unlimited retakes.
+const EXAM_QUESTIONS = [
+  // UC1 · Long-Term Follow-Up
+  {
+    uc:"Long-Term Follow-Up",
+    q:"After readout, a sponsor has several evidence questions to answer — payer HCRU, durability, and a safety sub-analysis. Why is linking the trial cohort to RWD once especially efficient here?",
+    opts:[
+      "Each question still requires a brand-new cohort linked from scratch",
+      "One linked trial-RWD cohort can be reused across multiple evidence-generation studies, avoiding repeated linkage and setup",
+      "RWD linkage can only ever answer a single research question per trial",
+      "It removes the need for any statistical analysis plan",
+    ],
+    correct:1,
+    explain:"Linking once creates a reusable trial-RWD foundation — the same linked cohort supports multiple analyses across the portfolio, avoiding repeated linkage and study-setup cost.",
+  },
+  {
+    uc:"Long-Term Follow-Up",
+    q:"A team is weighing whether to wait for post-launch real-world patients to accrue before generating long-term evidence. What does LTFU tokenization let them avoid?",
+    opts:[
+      "The need to ever collect any real-world data",
+      "An 18–24 month wait for post-launch patients to accrue before evidence generation can begin",
+      "FDA review of their long-term safety data",
+      "The cost of running the primary trial itself",
+    ],
+    correct:1,
+    explain:"Because tokenization links the existing trial participants to routine-care data at readout, teams begin generating long-term evidence immediately instead of waiting 18–24 months for post-launch accrual.",
+  },
+  // UC2 · Trial Representativeness
+  {
+    uc:"Trial Representativeness",
+    q:"A sponsor ignores representativeness until FDA submission, and a gap then surfaces for a key subgroup. What is a likely consequence?",
+    opts:[
+      "FDA approves automatically with no conditions",
+      "A post-marketing requirement (PMR) to study the under-represented subgroup, plus possible review delay",
+      "The trial must be re-run from Phase I",
+      "Nothing — representativeness is not a regulatory concern",
+    ],
+    correct:1,
+    explain:"Gaps discovered at submission — when enrollment is already locked — can trigger post-marketing requirements for the affected subgroup and add multi-month review delays.",
+  },
+  {
+    uc:"Trial Representativeness",
+    q:"What do site enrollment reports fail to provide that linking enrolled patients to pre-trial RWD supplies?",
+    opts:[
+      "The patients' full longitudinal clinical history and real-world context",
+      "The trial's randomization schedule",
+      "The site's monitoring-visit calendar",
+      "The drug's manufacturing batch records",
+    ],
+    correct:0,
+    explain:"Site reports show who enrolled but little clinical depth. Linking to pre-trial RWD adds the longitudinal medical history needed to judge whether the enrolled population reflects the label population.",
+  },
+  // UC3 · Safety Contextualization
+  {
+    uc:"Safety Contextualization",
+    q:"An unexpected event rate looks higher in the treated arm. With pre-linked RWD, what can the team determine?",
+    opts:[
+      "Whether the difference reflects patients' pre-existing baseline risk rather than a true treatment effect",
+      "The exact chemical cause of the event",
+      "Whether the FDA reviewer will approve the drug",
+      "The trial's future enrollment rate",
+    ],
+    correct:0,
+    explain:"Pre-linked clinical history reveals baseline risk factors, so teams can show whether a safety difference is driven by the population's pre-existing risk or by the treatment itself.",
+  },
+  {
+    uc:"Safety Contextualization",
+    q:"How do indicated external RWD cohorts help when contextualizing a safety signal?",
+    opts:[
+      "They remove the need for a control arm in every trial",
+      "They provide expected background event rates for a comparable real-world population",
+      "They automatically file the regulatory response",
+      "They lower the trial's enrollment target",
+    ],
+    correct:1,
+    explain:"External cohorts matched to the indication give a real-world background rate for the event, so the trial's observed rate can be judged against what's expected in similar patients.",
+  },
+  // UC4 · ECA Comparability
+  {
+    uc:"ECA Comparability",
+    q:"Besides satisfying FDA, who else gains confidence when a sponsor proves ECA comparability using the same RWD basis for both arms?",
+    opts:[
+      "The trial's clinical site coordinators",
+      "Payers and HTA bodies evaluating the treatment's benefit",
+      "The drug's packaging vendor",
+      "No one else — it is purely an FDA concern",
+    ],
+    correct:1,
+    explain:"A defensible, apples-to-apples external comparator also strengthens HTA and payer submissions, giving them more confidence in the estimated treatment benefit.",
+  },
+  {
+    uc:"ECA Comparability",
+    q:"What happens if a single-arm sponsor waits until FDA review to discover their external control population isn't comparable?",
+    opts:[
+      "FDA adjusts the analysis for them at no cost",
+      "They face expensive rework, delay, and possible resubmission",
+      "The external control is accepted automatically anyway",
+      "The trial retroactively converts to a randomized design",
+    ],
+    correct:1,
+    explain:"Comparability gaps found during review force emergency re-analysis, rework, and potentially resubmission — all avoidable by testing comparability before submission.",
+  },
+  // UC5 · Trial Patient Deduplication
+  {
+    uc:"Trial Patient Deduplication",
+    q:"Why can't manual, site-level checks reliably catch participants enrolled in multiple studies?",
+    opts:[
+      "Sites are not permitted to keep enrollment records",
+      "They are siloed to one study and rely on self-disclosure — they don't span across trials, phases, and programs, and professional participants conceal multi-enrollment",
+      "Duplicate enrollment is actually impossible",
+      "FDA prohibits checking for duplicates",
+    ],
+    correct:1,
+    explain:"Site checks cover a single study and depend on honesty. Tokenized linkage detects overlap across trials, phases, and programs without moving PII — something manual checks cannot do.",
+  },
+  {
+    uc:"Trial Patient Deduplication",
+    q:"What is the risk of leaving duplicate or professional participants undetected in a trial?",
+    opts:[
+      "It has no effect on the analysis",
+      "It distorts eligibility, safety, and outcome analyses and creates regulatory risk, while wasting per-patient follow-up spend",
+      "It speeds up regulatory approval",
+      "It only affects marketing, not the data",
+    ],
+    correct:1,
+    explain:"Undetected duplicates skew eligibility, safety, and outcome analyses — undermining data integrity and inviting regulatory scrutiny — while the sponsor keeps paying follow-up costs for patients who shouldn't be counted.",
+  },
+];
+const EXAM_TOTAL = EXAM_QUESTIONS.length;      // 10
+const EXAM_PASS = Math.ceil(EXAM_TOTAL * 0.8); // 8 (80%)
 
 const ALL_MODS = [INTRO, ...USE_CASES];
 
@@ -583,57 +716,6 @@ function QuizStep({quiz,qNum,total,selected,onSelect}){
   );
 }
 
-// ── Completion ────────────────────────────────────────────────────────────────
-function CompleteScreen({answers,onReview,onRetake}){
-  const scoreQ=USE_CASES.reduce((a,m)=>a+m.quizzes.filter((_,i)=>answers[`${m.id}-q${i}`]===m.quizzes[i].correct).length,0);
-  const pct=Math.round(scoreQ/TOTAL_Q*100);
-  const tier=pct>=85?"Trial Tokenization Expert":pct>=65?"Certified Practitioner":"Sales Apprentice";
-  return(
-    <div style={{minHeight:"100vh",background:DV.bg,fontFamily:"system-ui,sans-serif"}}>
-      <div style={{background:DV.black,padding:"14px 32px"}}><span style={{color:DV.white,fontWeight:800,fontSize:18,letterSpacing:"-.02em"}}>datavant</span></div>
-      <div style={{maxWidth:580,margin:"56px auto",padding:"0 20px"}}>
-        <div style={{background:DV.card,borderRadius:20,padding:"48px 44px",boxShadow:"0 8px 32px rgba(0,0,0,.1)",textAlign:"center"}}>
-          <div style={{fontSize:64,marginBottom:12}}>{pct>=85?"🏆":pct>=65?"🎓":"📚"}</div>
-          <h1 style={{fontSize:28,fontWeight:800,color:DV.text,marginBottom:6}}>Course Complete</h1>
-          <p style={{color:DV.slate,fontSize:14,marginBottom:28}}>Trial Tokenization Value Manifesto</p>
-          <div style={{position:"relative",width:120,height:120,margin:"0 auto 20px"}}>
-            <svg viewBox="0 0 120 120" style={{width:120,height:120,transform:"rotate(-90deg)"}}>
-              <circle cx="60" cy="60" r="50" fill="none" stroke={DV.border} strokeWidth="10"/>
-              <circle cx="60" cy="60" r="50" fill="none" stroke={DV.cobalt} strokeWidth="10"
-                strokeDasharray={`${2*Math.PI*50*pct/100} ${2*Math.PI*50}`} strokeLinecap="round"/>
-            </svg>
-            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-              <span style={{fontSize:24,fontWeight:800,color:DV.text}}>{pct}%</span>
-              <span style={{fontSize:11,color:DV.slate}}>{scoreQ}/{TOTAL_Q}</span>
-            </div>
-          </div>
-          <div style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:12,padding:"16px 20px",marginBottom:24}}>
-            <div style={{fontSize:17,fontWeight:700,color:DV.cobalt,marginBottom:5}}>🏅 {tier}</div>
-            <p style={{color:"#3B82F6",fontSize:13,lineHeight:1.55,margin:0}}>{pct>=85?"Outstanding. You're fully equipped to lead trial tokenization conversations.":pct>=65?"Solid foundation. Review use cases where you missed questions.":"Keep at it — revisit the content before your next client conversation."}</p>
-          </div>
-          <div style={{textAlign:"left",marginBottom:28}}>
-            <div style={{fontSize:11,fontWeight:700,color:DV.slate,letterSpacing:".06em",textTransform:"uppercase",marginBottom:10}}>Results by Use Case</div>
-            {USE_CASES.map(m=>{
-              const s=m.quizzes.filter((_,i)=>answers[`${m.id}-q${i}`]===m.quizzes[i].correct).length;
-              return(
-                <div key={m.id} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:`1px solid ${DV.border}`}}>
-                  <span style={{fontSize:16}}>{m.emoji}</span>
-                  <span style={{flex:1,fontSize:13,color:DV.sub}}>{m.title}</span>
-                  <span style={{fontSize:13,fontWeight:700,color:s===m.quizzes.length?DV.mint:DV.coral}}>{s}/{m.quizzes.length}</span>
-                </div>
-              );
-            })}
-          </div>
-          <div style={{display:"flex",gap:10,justifyContent:"center"}}>
-            <button onClick={onReview} style={{background:"transparent",color:DV.cobalt,border:`2px solid ${DV.cobalt}`,padding:"11px 24px",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer"}}>Review Course</button>
-            <button onClick={onRetake} style={{background:DV.cobalt,color:"white",border:"none",padding:"11px 24px",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer"}}>Retake Course</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Top Nav ───────────────────────────────────────────────────────────────────
 function TopNav({modIdx,onJump,answeredQ,isModDone}){
   return(
@@ -660,6 +742,256 @@ function TopNav({modIdx,onJump,answeredQ,isModDone}){
   );
 }
 
+// ── Airtable submission ───────────────────────────────────────────────────────
+// Sends a completion record to Airtable. Configured via Vercel env vars:
+//   VITE_AIRTABLE_TOKEN, VITE_AIRTABLE_BASE_ID, VITE_AIRTABLE_TABLE (default "Completions")
+// If env vars are missing (e.g. local dev), it no-ops gracefully instead of throwing.
+async function submitToAirtable(email, score, question){
+  const token = import.meta.env.VITE_AIRTABLE_TOKEN;
+  const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
+  const table = import.meta.env.VITE_AIRTABLE_TABLE || "Completions";
+  if(!token || !baseId){
+    console.warn("Airtable not configured — skipping completion submission.");
+    return { ok:false, skipped:true };
+  }
+  const res = await fetch(`https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}`,{
+    method:"POST",
+    headers:{ "Authorization":`Bearer ${token}`, "Content-Type":"application/json" },
+    body:JSON.stringify({ fields:{
+      Email: email || "",
+      Score: `${score}/${EXAM_TOTAL}`,
+      "Completed At": new Date().toISOString(),
+      Question: question || "",
+    }}),
+  });
+  return { ok:res.ok, skipped:false };
+}
+
+// ── Final Exam ────────────────────────────────────────────────────────────────
+function ExamScreen({ onPass }){
+  const [answers,setAnswers]=useState({}); // qIdx -> optIdx
+  const [submitted,setSubmitted]=useState(false);
+  const [attempt,setAttempt]=useState(1);
+  const [started,setStarted]=useState(false);
+
+  const answeredCount=Object.keys(answers).length;
+  const allAnswered=answeredCount===EXAM_TOTAL;
+  const score=EXAM_QUESTIONS.reduce((a,q,i)=>a+(answers[i]===q.correct?1:0),0);
+  const passed=score>=EXAM_PASS;
+
+  function pick(qi,oi){ if(!submitted) setAnswers(p=>({...p,[qi]:oi})); }
+  function retake(){ setAnswers({}); setSubmitted(false); setAttempt(a=>a+1); window.scrollTo(0,0); }
+
+  // Result view
+  if(submitted){
+    return(
+      <div style={{minHeight:"100vh",background:DV.bg,fontFamily:"system-ui,sans-serif"}}>
+        <div style={{background:DV.black,padding:"14px 32px"}}><span style={{color:DV.white,fontWeight:800,fontSize:18,letterSpacing:"-.02em"}}>datavant</span></div>
+        <div style={{maxWidth:600,margin:"48px auto",padding:"0 20px"}}>
+          <div style={{background:DV.card,borderRadius:20,padding:"44px 40px",boxShadow:"0 8px 32px rgba(0,0,0,.1)",textAlign:"center"}}>
+            <div style={{fontSize:60,marginBottom:10}}>{passed?"🎉":"📚"}</div>
+            <h1 style={{fontSize:26,fontWeight:800,color:DV.text,marginBottom:6}}>{passed?"You Passed!":"Not Quite Yet"}</h1>
+            <p style={{color:DV.slate,fontSize:14,marginBottom:24}}>Final Exam · Trial Tokenization Value Manifesto</p>
+            <div style={{display:"inline-block",background:passed?"#F0FDF4":"#FFF5F5",border:`1px solid ${passed?"#A7F3D0":"#FECACA"}`,borderRadius:14,padding:"18px 40px",marginBottom:22}}>
+              <div style={{fontSize:40,fontWeight:800,color:passed?"#166534":"#991B1B"}}>{score}/{EXAM_TOTAL}</div>
+              <div style={{fontSize:13,color:passed?"#166534":"#991B1B",fontWeight:600}}>{Math.round(score/EXAM_TOTAL*100)}% · pass mark {EXAM_PASS}/{EXAM_TOTAL} (80%)</div>
+            </div>
+            <p style={{color:DV.sub,fontSize:14,lineHeight:1.6,marginBottom:26}}>
+              {passed
+                ? "Great work — you've demonstrated command of all five use cases. Continue to wrap up the course."
+                : `You need ${EXAM_PASS}/${EXAM_TOTAL} to pass. Review the use cases where you missed questions, then retake the exam — there's no limit on attempts.`}
+            </p>
+
+            {/* Per-question breakdown */}
+            <div style={{textAlign:"left",marginBottom:28}}>
+              <div style={{fontSize:11,fontWeight:700,color:DV.slate,letterSpacing:".06em",textTransform:"uppercase",marginBottom:10}}>Your Answers</div>
+              {EXAM_QUESTIONS.map((q,i)=>{
+                const ok=answers[i]===q.correct;
+                return(
+                  <div key={i} style={{display:"flex",gap:10,padding:"8px 0",borderBottom:`1px solid ${DV.border}`,alignItems:"flex-start"}}>
+                    <span style={{fontSize:14,flexShrink:0,color:ok?DV.mint:DV.coral,fontWeight:700}}>{ok?"✓":"✗"}</span>
+                    <span style={{flex:1,fontSize:12,color:DV.sub,lineHeight:1.5}}><strong style={{color:DV.slate}}>Q{i+1} · {q.uc}</strong></span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{display:"flex",gap:10,justifyContent:"center"}}>
+              {passed
+                ? <button onClick={()=>onPass(score)} style={{background:DV.cobalt,color:"white",border:"none",padding:"12px 32px",borderRadius:8,fontSize:14,fontWeight:700,cursor:"pointer"}}>Finish Course →</button>
+                : <button onClick={retake} style={{background:DV.cobalt,color:"white",border:"none",padding:"12px 32px",borderRadius:8,fontSize:14,fontWeight:700,cursor:"pointer"}}>Retake Exam</button>}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Intro / section screen — shown before the exam questions
+  if(!started){
+    return(
+      <div style={{minHeight:"100vh",background:DV.black,fontFamily:"system-ui,sans-serif",display:"flex",flexDirection:"column"}}>
+        <div style={{padding:"16px 36px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid rgba(255,255,255,.08)"}}>
+          <span style={{color:DV.white,fontWeight:800,fontSize:20,letterSpacing:"-.02em"}}>datavant</span>
+          <span style={{color:"rgba(255,255,255,.35)",fontSize:12,fontWeight:600,letterSpacing:".06em",textTransform:"uppercase"}}>Final Exam</span>
+        </div>
+        <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"48px 24px",textAlign:"center"}}>
+          <div style={{maxWidth:560}}>
+            <div style={{fontSize:56,marginBottom:18}}>📝</div>
+            <div style={{display:"inline-block",border:"1px solid rgba(255,255,255,.18)",borderRadius:20,padding:"5px 18px",fontSize:11,color:"rgba(255,255,255,.55)",fontWeight:700,letterSpacing:".1em",textTransform:"uppercase",marginBottom:20}}>
+              Final Section
+            </div>
+            <h1 style={{fontSize:38,fontWeight:800,color:DV.white,lineHeight:1.15,letterSpacing:"-.03em",marginBottom:16}}>Final Exam</h1>
+            <p style={{fontSize:16,color:"rgba(255,255,255,.6)",lineHeight:1.7,maxWidth:460,margin:"0 auto 32px"}}>
+              You've worked through all five use cases. This final exam confirms you're ready to lead trial tokenization conversations.
+            </p>
+            <div style={{display:"flex",justifyContent:"center",gap:0,background:"rgba(255,255,255,.06)",borderRadius:14,padding:"16px 0",maxWidth:420,margin:"0 auto 32px"}}>
+              {[{val:EXAM_TOTAL,lbl:"Questions"},{val:"80%",lbl:"Pass Mark"},{val:"∞",lbl:"Retakes"}].map((s,i)=>(
+                <div key={i} style={{flex:1,textAlign:"center",borderRight:i<2?"1px solid rgba(255,255,255,.1)":"none"}}>
+                  <div style={{fontSize:24,fontWeight:800,color:DV.white}}>{s.val}</div>
+                  <div style={{fontSize:11,color:"rgba(255,255,255,.4)"}}>{s.lbl}</div>
+                </div>
+              ))}
+            </div>
+            <p style={{fontSize:13,color:"rgba(255,255,255,.4)",marginBottom:28}}>
+              Two questions per use case. Answer all {EXAM_TOTAL}, then submit. You need {EXAM_PASS}/{EXAM_TOTAL} to pass — retake as many times as you need.
+            </p>
+            <button onClick={()=>{ setStarted(true); window.scrollTo(0,0); }}
+              style={{background:DV.white,color:DV.cobalt,border:"none",padding:"15px 52px",borderRadius:10,fontSize:17,fontWeight:800,cursor:"pointer",boxShadow:"0 4px 20px rgba(0,0,0,.3)"}}>
+              Begin Exam →
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Exam-taking view
+  return(
+    <div style={{minHeight:"100vh",background:DV.bg,fontFamily:"system-ui,sans-serif"}}>
+      <div style={{background:DV.black,padding:"14px 32px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <span style={{color:DV.white,fontWeight:800,fontSize:18,letterSpacing:"-.02em"}}>datavant</span>
+        <span style={{color:"rgba(255,255,255,.5)",fontSize:12,fontWeight:600}}>Final Exam{attempt>1?` · Attempt ${attempt}`:""}</span>
+      </div>
+      <div style={{maxWidth:720,margin:"32px auto 120px",padding:"0 20px"}}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{fontSize:11,fontWeight:700,color:DV.slate,letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>Final Exam</div>
+          <h1 style={{fontSize:26,fontWeight:800,color:DV.text,letterSpacing:"-.02em",marginBottom:8}}>10 Questions · Pass Mark 80%</h1>
+          <p style={{fontSize:14,color:DV.sub}}>Answer all {EXAM_TOTAL} questions, then submit. You need {EXAM_PASS}/{EXAM_TOTAL} to pass. Unlimited retakes.</p>
+        </div>
+
+        {EXAM_QUESTIONS.map((q,qi)=>(
+          <div key={qi} style={{background:DV.card,borderRadius:14,padding:"22px 24px",marginBottom:14,boxShadow:"0 2px 8px rgba(0,0,0,.05)"}}>
+            <div style={{fontSize:11,fontWeight:700,color:DV.cobalt,letterSpacing:".06em",textTransform:"uppercase",marginBottom:8}}>Q{qi+1} · {q.uc}</div>
+            <p style={{fontSize:15,fontWeight:600,color:DV.text,lineHeight:1.5,marginBottom:16}}>{q.q}</p>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {q.opts.map((opt,oi)=>{
+                const chosen=answers[qi]===oi;
+                return(
+                  <div key={oi} className="opt" onClick={()=>pick(qi,oi)}
+                    style={{padding:"11px 14px",borderRadius:9,cursor:"pointer",display:"flex",alignItems:"flex-start",gap:11,
+                      background:chosen?"#EBF2FF":DV.card,border:`2px solid ${chosen?DV.blue:DV.border}`,transition:"all .12s"}}>
+                    <span style={{width:26,height:26,borderRadius:"50%",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,
+                      background:chosen?DV.cobalt:"#F1F5F9",color:chosen?"white":DV.slate}}>{String.fromCharCode(65+oi)}</span>
+                    <span style={{fontSize:14,color:chosen?DV.text:DV.sub,lineHeight:1.5,paddingTop:3}}>{opt}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Sticky submit bar */}
+      <div style={{position:"fixed",bottom:0,left:0,right:0,background:DV.card,borderTop:`1px solid ${DV.border}`,padding:"12px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,zIndex:10}}>
+        <span style={{fontSize:13,color:DV.slate,fontWeight:600}}>{answeredCount}/{EXAM_TOTAL} answered</span>
+        <button onClick={()=>{ if(allAnswered){ setSubmitted(true); window.scrollTo(0,0);} }} disabled={!allAnswered}
+          style={{background:allAnswered?DV.cobalt:DV.border,color:allAnswered?DV.white:DV.slate,border:"none",padding:"11px 32px",borderRadius:8,fontSize:14,fontWeight:700,cursor:allAnswered?"pointer":"default"}}>
+          Submit Exam
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Closing Screen ────────────────────────────────────────────────────────────
+function ClosingScreen({ score }){
+  const { user } = useUser();
+  const email = user?.primaryEmailAddress?.emailAddress || "";
+  const [question,setQuestion]=useState("");
+  const [status,setStatus]=useState("idle"); // idle | sending | done | error
+
+  async function finish(){
+    setStatus("sending");
+    try{
+      await submitToAirtable(email, score, question);
+      setStatus("done");
+    }catch(e){
+      console.error(e);
+      setStatus("error");
+    }
+  }
+
+  if(status==="done"){
+    return(
+      <div style={{minHeight:"100vh",background:DV.bg,fontFamily:"system-ui,sans-serif"}}>
+        <div style={{background:DV.black,padding:"14px 32px"}}><span style={{color:DV.white,fontWeight:800,fontSize:18,letterSpacing:"-.02em"}}>datavant</span></div>
+        <div style={{maxWidth:560,margin:"72px auto",padding:"0 20px"}}>
+          <div style={{background:DV.card,borderRadius:20,padding:"48px 44px",boxShadow:"0 8px 32px rgba(0,0,0,.1)",textAlign:"center"}}>
+            <div style={{fontSize:60,marginBottom:12}}>🎓</div>
+            <h1 style={{fontSize:26,fontWeight:800,color:DV.text,marginBottom:10}}>You're all set!</h1>
+            <p style={{color:DV.slate,fontSize:15,lineHeight:1.65}}>{question?"Thanks for your question — we'll address it in the live session.":"See you at the live training session."}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return(
+    <div style={{minHeight:"100vh",background:DV.bg,fontFamily:"system-ui,sans-serif"}}>
+      <div style={{background:DV.black,padding:"14px 32px"}}><span style={{color:DV.white,fontWeight:800,fontSize:18,letterSpacing:"-.02em"}}>datavant</span></div>
+      <div style={{maxWidth:600,margin:"48px auto",padding:"0 20px"}}>
+        <div style={{background:DV.card,borderRadius:20,padding:"44px 40px",boxShadow:"0 8px 32px rgba(0,0,0,.1)"}}>
+          <div style={{textAlign:"center",marginBottom:28}}>
+            <div style={{fontSize:60,marginBottom:12}}>🏆</div>
+            <h1 style={{fontSize:28,fontWeight:800,color:DV.text,marginBottom:10}}>Congratulations!</h1>
+            <p style={{color:DV.sub,fontSize:15,lineHeight:1.65}}>
+              You've completed the Trial Tokenization Value Manifesto and passed the final exam with a score of <strong>{score}/{EXAM_TOTAL}</strong>. You're ready to lead trial tokenization conversations with pharma and biotech customers.
+            </p>
+          </div>
+
+          <div style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:12,padding:"18px 20px",marginBottom:22}}>
+            <div style={{fontSize:13,fontWeight:700,color:DV.cobalt,marginBottom:8}}>💬 A question for the live session?</div>
+            <p style={{fontSize:13,color:"#1E40AF",lineHeight:1.55,marginBottom:12}}>Optional — drop anything you'd like the team to cover live. We'll review submissions before the session.</p>
+            <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Type your question here…"
+              rows={4} style={{width:"100%",resize:"vertical",padding:"12px 14px",borderRadius:9,border:`1px solid ${DV.border}`,fontSize:14,fontFamily:"inherit",color:DV.text,boxSizing:"border-box"}}/>
+          </div>
+
+          {status==="error"&&(
+            <div style={{background:"#FFF5F5",border:"1px solid #FECACA",borderRadius:9,padding:"12px 16px",marginBottom:16,fontSize:13,color:"#991B1B"}}>
+              Something went wrong recording your completion. Please try again.
+            </div>
+          )}
+
+          <button onClick={finish} disabled={status==="sending"}
+            style={{width:"100%",background:DV.cobalt,color:"white",border:"none",padding:"14px",borderRadius:9,fontSize:15,fontWeight:800,cursor:status==="sending"?"default":"pointer",opacity:status==="sending"?.7:1,marginBottom:26}}>
+            {status==="sending"?"Recording…":"Submit & Finish 🎓"}
+          </button>
+
+          <div style={{borderTop:`1px solid ${DV.border}`,paddingTop:20}}>
+            <div style={{fontSize:11,fontWeight:700,color:DV.slate,letterSpacing:".06em",textTransform:"uppercase",marginBottom:10}}>Questions? Contact the team</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+              {["Ulka Campbell","Kathleen Gavin","My Nguyen"].map(n=>(
+                <div key={n} style={{background:DV.bg,border:`1px solid ${DV.border}`,borderRadius:20,padding:"6px 14px",fontSize:13,color:DV.sub,fontWeight:600}}>{n}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main App ──────────────────────────────────────────────────────────────────
 export default function App(){
   const [screen,setScreen]=useState("landing");
@@ -667,6 +999,7 @@ export default function App(){
   const [stepIdx,setStepIdx]=useState(0);
   const [answers,setAnswers]=useState({});
   const [animKey,setAnimKey]=useState(0);
+  const [examScore,setExamScore]=useState(0);
   // History stack: each entry = {modIdx, stepIdx} we came FROM.
   // navigate() pushes current location before moving; goBack() pops and restores.
   const [navHistory,setNavHistory]=useState([]);
@@ -684,10 +1017,26 @@ export default function App(){
     setModIdx(mi);
     setStepIdx(si);
   }
+  // All use-case knowledge checks answered? Required before the final exam unlocks.
+  function allUseCasesDone(){
+    return USE_CASES.every(m=>m.quizzes.every((_,i)=>getAnswer(m.id,i)!==undefined));
+  }
+  function firstIncompleteModIdx(){
+    for(let i=0;i<ALL_MODS.length;i++){
+      const m=ALL_MODS[i];
+      if(m.type==="usecase" && !m.quizzes.every((_,j)=>getAnswer(m.id,j)!==undefined)) return i;
+    }
+    return -1;
+  }
   function goNext(){
-    if(!isLastStep) navigate(modIdx,stepIdx+1);
+    if(!isLastStep){ navigate(modIdx,stepIdx+1); return; }
+    // On a module's last step: once every use case is done, go straight to the exam
+    // (no need to click back through a use case that was completed earlier).
+    if(allUseCasesDone()){ window.scrollTo(0,0); setScreen("exam"); return; }
+    // Otherwise route to the first unfinished use case, or advance to the next module.
+    const i=firstIncompleteModIdx();
+    if(i!==-1) navigate(i,0);
     else if(!isLastMod) navigate(modIdx+1,0);
-    else setScreen("complete");
   }
   function goBack(){
     if(navHistory.length===0) return;
@@ -739,13 +1088,12 @@ export default function App(){
   }
 
   if(screen==="landing") return <><style>{CSS}</style><Landing onStart={()=>setScreen("course")}/></>;
-  if(screen==="complete") return(
+  if(screen==="exam") return(
     <><style>{CSS}</style>
-      <CompleteScreen answers={answers}
-        onReview={()=>{setModIdx(1);setStepIdx(0);setScreen("course");}}
-        onRetake={()=>{setAnswers({});setModIdx(0);setStepIdx(0);setScreen("course");}}/>
+      <ExamScreen onPass={(s)=>{ setExamScore(s); window.scrollTo(0,0); setScreen("closing"); }}/>
     </>
   );
+  if(screen==="closing") return <><style>{CSS}</style><ClosingScreen score={examScore}/></>;
 
   return(
     <><style>{CSS}</style>
@@ -795,7 +1143,7 @@ export default function App(){
           )}
           <button onClick={goNext} disabled={!canContinue()}
             style={{background:canContinue()?DV.cobalt:DV.border,color:canContinue()?DV.white:DV.slate,border:"none",padding:"9px 24px",borderRadius:8,fontSize:14,fontWeight:700,cursor:canContinue()?"pointer":"default",whiteSpace:"nowrap"}}>
-            {isLastStep&&isLastMod?"Finish 🎓":"Continue →"}
+            {isLastStep&&isLastMod?(allUseCasesDone()?"Start Final Exam →":"Finish remaining use cases →"):"Continue →"}
           </button>
         </div>
       </div>
