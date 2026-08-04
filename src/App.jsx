@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/clerk-react";
 
 const DV = {
@@ -764,7 +764,32 @@ async function submitToAirtable(email, score, question){
       Question: question || "",
     }}),
   });
-  return { ok:res.ok, skipped:false };
+  if(!res.ok){
+    const body = await res.text().catch(()=>"");
+    console.error("Airtable write failed:", res.status, body); // check the browser console for the reason
+    throw new Error(`Airtable ${res.status}: ${body}`);
+  }
+  const data = await res.json().catch(()=>({}));
+  console.log("Airtable write OK", data && data.id);
+  return { ok:true, skipped:false, id:(data && data.id) || null };
+}
+
+// Adds the user's question to the completion record that was already created.
+async function addQuestionToRecord(recordId, question){
+  const token = import.meta.env.VITE_AIRTABLE_TOKEN;
+  const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
+  const table = import.meta.env.VITE_AIRTABLE_TABLE || "Completions";
+  if(!token || !baseId || !recordId) return { ok:false, skipped:true };
+  const res = await fetch(`https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}/${recordId}`,{
+    method:"PATCH",
+    headers:{ "Authorization":`Bearer ${token}`, "Content-Type":"application/json" },
+    body:JSON.stringify({ fields:{ Question: question || "" } }),
+  });
+  if(!res.ok){
+    const body = await res.text().catch(()=>"");
+    throw new Error(`Airtable ${res.status}: ${body}`);
+  }
+  return { ok:true };
 }
 
 // ── Final Exam ────────────────────────────────────────────────────────────────
@@ -920,14 +945,43 @@ function ClosingScreen({ score }){
   const email = user?.primaryEmailAddress?.emailAddress || "";
   const [question,setQuestion]=useState("");
   const [status,setStatus]=useState("idle"); // idle | sending | done | error
+  const [errMsg,setErrMsg]=useState("");
+  // Auto-record state: completion is saved as soon as this screen is reached.
+  const [recStatus,setRecStatus]=useState("saving"); // saving | saved | failed
+  const [recErr,setRecErr]=useState("");
+  const recordIdRef=useRef(null);
+  const didRecordRef=useRef(false);
+
+  // Record the completion immediately on arrival — no button click required.
+  useEffect(()=>{
+    if(didRecordRef.current) return;   // guard against double-run
+    didRecordRef.current=true;
+    (async()=>{
+      try{
+        const r=await submitToAirtable(email, score, "");
+        recordIdRef.current=r.id;
+        setRecStatus(r.skipped?"failed":"saved");
+        if(r.skipped) setRecErr("Airtable is not configured (missing environment variables).");
+      }catch(e){
+        console.error(e);
+        setRecErr(String(e && e.message ? e.message : e));
+        setRecStatus("failed");
+      }
+    })();
+  },[email,score]);
 
   async function finish(){
     setStatus("sending");
     try{
-      await submitToAirtable(email, score, question);
+      if(question.trim()){
+        // Attach the question to the record already created on arrival.
+        if(recordIdRef.current) await addQuestionToRecord(recordIdRef.current, question);
+        else await submitToAirtable(email, score, question); // fallback if the auto-record failed
+      }
       setStatus("done");
     }catch(e){
       console.error(e);
+      setErrMsg(String(e && e.message ? e.message : e));
       setStatus("error");
     }
   }
@@ -960,6 +1014,17 @@ function ClosingScreen({ score }){
             </p>
           </div>
 
+          {/* Auto-record status — completion is saved on arrival, no click needed */}
+          <div style={{borderRadius:10,padding:"11px 16px",marginBottom:18,fontSize:13,fontWeight:600,
+            background:recStatus==="saved"?"#F0FDF4":recStatus==="failed"?"#FFF5F5":"#F1F5F9",
+            border:`1px solid ${recStatus==="saved"?"#A7F3D0":recStatus==="failed"?"#FECACA":DV.border}`,
+            color:recStatus==="saved"?"#166534":recStatus==="failed"?"#991B1B":DV.slate}}>
+            {recStatus==="saving"&&"Recording your completion…"}
+            {recStatus==="saved"&&"✓ Your completion has been recorded."}
+            {recStatus==="failed"&&<>Could not record your completion automatically. Please notify the training team.
+              {recErr&&<div style={{marginTop:5,fontSize:11,fontWeight:400,color:"#B91C1C",wordBreak:"break-word"}}>{recErr}</div>}</>}
+          </div>
+
           <div style={{background:"#EFF6FF",border:"1px solid #BFDBFE",borderRadius:12,padding:"18px 20px",marginBottom:22}}>
             <div style={{fontSize:13,fontWeight:700,color:DV.cobalt,marginBottom:8}}>💬 A question for the live session?</div>
             <p style={{fontSize:13,color:"#1E40AF",lineHeight:1.55,marginBottom:12}}>Optional — drop anything you'd like the team to cover live. We'll review submissions before the session.</p>
@@ -970,12 +1035,13 @@ function ClosingScreen({ score }){
           {status==="error"&&(
             <div style={{background:"#FFF5F5",border:"1px solid #FECACA",borderRadius:9,padding:"12px 16px",marginBottom:16,fontSize:13,color:"#991B1B"}}>
               Something went wrong recording your completion. Please try again.
+              {errMsg&&<div style={{marginTop:6,fontSize:11,color:"#B91C1C",wordBreak:"break-word"}}>{errMsg}</div>}
             </div>
           )}
 
           <button onClick={finish} disabled={status==="sending"}
             style={{width:"100%",background:DV.cobalt,color:"white",border:"none",padding:"14px",borderRadius:9,fontSize:15,fontWeight:800,cursor:status==="sending"?"default":"pointer",opacity:status==="sending"?.7:1,marginBottom:26}}>
-            {status==="sending"?"Recording…":"Submit & Finish 🎓"}
+            {status==="sending"?"Sending…":(question.trim()?"Submit Question & Finish 🎓":"Finish 🎓")}
           </button>
 
           <div style={{borderTop:`1px solid ${DV.border}`,paddingTop:20}}>
