@@ -24,10 +24,10 @@ const CSS = `
 const INTRO = {
   id:"intro", type:"intro",
   problems:[
-    {t:"Evidence gaps post-readout", b:"Primary trials don't answer long-term safety, durability, HCRU, or cost questions. Teams rely on costly extensions or wait years for post-launch data."},
-    {t:"Costly site follow-up", b:"LTEs and registries keep sites and patients engaged long after the primary trial — expensive, burdensome, with significant risk of loss-to-follow-up."},
-    {t:"Disconnected trial & RWD context", b:"Trial baseline data relies on anticipated needs. Linking to longitudinal RWD unlocks medical history and improves interpretation of trial results."},
-    {t:"High-stake questions arriving late", b:"Safety or representativeness concerns often surface near submission. Starting linkage then creates avoidable delay and fire drills."},
+    {t:"Evidence gaps post-completion", b:"Clinical trials don't answer long-term safety, durability, HCRU, or cost questions. Teams rely on long-term extension (LTE) studies or wait years for post-launch data."},
+    {t:"Costly site follow-up", b:"LTE studies require continued site and patient engagement, which is expensive and burdensome, with significant risk of loss to follow-up."},
+    {t:"Disconnected trial & RWD context", b:"The breadth of baseline data collected in a clinical trial is informed by anticipated needs. Linking to longitudinal RWD unlocks historical data on medical and treatment history and healthcare resource utilization, which improves interpretation of trial results."},
+    {t:"High-stake questions arriving late", b:"Safety or representativeness concerns often surface near submission. Early trial tokenization and linkage better place clients to address these concerns in a timely fashion."},
   ],
 };
 
@@ -35,74 +35,116 @@ const USE_CASES = [
   {
     id:"uc1", type:"usecase", num:1, emoji:"📅",
     title:"Long-Term Follow-Up",
-    sub:"Follow patients post-readout via RWD",
-    timing:"After trial read-out",
-    headline:"Follow trial patients into routine care to capture long-term safety, HCRU, and durability evidence — without costly site extensions.",
-    rwdWhy:"Once a trial protocol ends, sponsors lose all visibility of how patients fare in routine care. Site-based LTEs are prohibitively expensive and lose 20–40% of patients. RWD linkage is the only scalable path to long-term evidence.",
+    sub:"Follow patients after trial completion via RWD",
+    timing:"After trial completion",
+    how:{
+      subtitle:"Follow trial patients into routine care to capture post-trial safety, durability and HCRU.",
+      example:"link an NSCLC trial cohort to mortality and claims data to measure overall survival, next-line treatment and hospital use after the trial.",
+      flow:[
+        {emoji:"🗂️",label:"INPUT",sub:"Data linked",items:[
+          "Tokenized US trial participants — treatment arms/exposure, dates, endpoints",
+          "Real-world data: open/closed claims, EHR / labs, mortality",
+        ]},
+        {emoji:"⚙️",label:"WHAT DATAVANT DOES",sub:"Datavant solutions",items:[
+          {t:"Link trial participants to post-trial RWD",d:"Connect trial-defined patients to routine-care data after follow-up ends."},
+          {t:"Contextualize long-term outcomes",d:"Benchmark outcomes against trial-similar or indicated patient populations using RWD."},
+          {t:"Generate post-trial evidence",d:"Measure post-trial effectiveness and safety outcomes, treatment patterns, HCRU and healthcare costs."},
+        ]},
+        {emoji:"📈",label:"OUTPUT",sub:"Evidence generated",items:[
+          "Post-trial safety, durability, treatment patterns",
+          "HCRU and cost",
+          "Mortality / overall survival",
+        ],purpose:"For payer / HTA, regulatory and safety decisions."},
+      ],
+      bottomLine:"One linked cohort — reused across many evidence questions, without re-linking each time.",
+    },
+    headline:"Follow trial patients into routine care to capture long-term safety, HCRU and durability evidence",
+    rwdWhy:"Passively follow trial participants through routine care to efficiently capture long-term safety, HCRU, and durability evidence. Used today as a complement to traditional methods, RWD linkage extends evidence generation beyond the protocol — and may reduce reliance on site-based LTEs over time.",
     challenges:[
-      "Primary trials leave long-term safety, HCRU, and durability evidence unanswered",
-      "Site-based LTEs cost millions and risk 20–40% patient loss-to-follow-up",
-      "Waiting for post-launch accrual delays payer and HEOR evidence by 18–24 months",
+      "Once a trial protocol ends, sponsors lose visibility of how patients fare in routine care",
+      "Clinical trials leave long-term safety, HCRU, and durability evidence unanswered",
+      "Site-based LTEs cost millions and are subject to poor generalizability due to participant selection and loss-to-follow-up challenges",
+      "Waiting for post-launch accrual delays payer and HTA evidence by 18–24 months",
     ],
     without:[
       "Maintain costly site follow-up for years post-trial",
       "Wait 18–24 months for real-world treated patients to accrue post-launch",
-      "Run chart retrieval — high-touch, manual, impossible to scale",
-      "Design each LTE study individually with no portfolio reuse",
+      "Rely on chart retrieval — high-touch, manual, and impossible to scale",
+      "Start from scratch for each LTE study",
     ],
     with:[
-      "Link tokenized trial participants to claims/EHR/mortality immediately at readout",
+      "Link tokenized trial participants to claims/EHR/mortality immediately at trial completion",
       "Start evidence generation earlier — no need to wait for post-launch accrual",
       "Reuse one linked trial-RWD cohort across multiple evidence generation studies",
       "Build a reusable data foundation across the full portfolio",
     ],
     value:{ levers:[
       {name:"HEOR efficiency",type:"cost",feasibility:"High",detail:"Reuse one linked cohort across multiple analyses — avoid repeated linkage and study setup"},
-      {name:"LT Outcome completeness",type:"cost",feasibility:"High",detail:"Claims and EHR fill evidence gaps beyond trial follow-up, reducing chart retrieval cost"},
+      {name:"LT Outcome completeness",type:"cost",feasibility:"High",detail:"Claims and EHR fill evidence gaps beyond trial follow-up"},
       {name:"Lower LTE cost",type:"cost",feasibility:"Medium",detail:"Replace site follow-up with routine-care data for eligible long-term outcomes"},
       {name:"Expanded payer access",type:"rev",feasibility:"Low",detail:"Durability, HCRU, and cost evidence strengthens payer and HTA story"},
     ]},
     discoveryQs:[
-      "When your trial reads out, what's your current plan for capturing long-term safety and HCRU evidence?",
-      "How long does it typically take your team to stand up a post-launch real-world evidence study after readout?",
+      "When your trial reaches completion, what's your current plan for capturing long-term safety and HCRU evidence?",
+      "How long does it typically take your team to stand up a post-launch real-world evidence study after trial completion?",
       "Are you planning any long-term extension (LTE) studies for current trials? What's driving that decision over an RWD approach?",
     ],
     quizzes:[
       {
-        q:"A Phase III cardiovascular trial has just read out. The sponsor needs payer-ready HCRU and durability evidence. What does Datavant LTFU tokenization enable?",
-        opts:["Wait 18–24 months for post-launch treated patients to accrue in RWD, then start a claims study","Extend the trial protocol with a 3-year site-based LTE","Link tokenized trial participants to claims/EHR/mortality immediately after protocol follow-up ends","Commission a systematic literature review of similar cardiovascular trials"],
+        q:"A Phase III cardiovascular trial has just reached completion. The sponsor needs payer-ready HCRU and durability evidence. What does Datavant trial tokenization and RWD linkage enable?",
+        opts:["Wait 18–24 months for post-launch treated patients to accrue in RWD, then start a claims study","Extend the trial protocol with a 3-year site-based LTE","Link tokenized trial participants to claims/EHR/mortality after protocol follow-up ends to passively follow patients through routine care and collect data on their medical journey and health outcomes","Commission a systematic literature review of similar cardiovascular trials"],
         correct:2,
         explain:"LTFU tokenization links trial-defined patients to routine-care data (claims, EHR, mortality) immediately after protocol follow-up ends — starting evidence generation earlier than waiting for post-launch accrual, without running a separate LTE.",
       },
       {
-        q:"A sponsor is weighing two options after their trial reads out: (A) maintain a site-based LTE, or (B) use Datavant LTFU tokenization. What is the key advantage of option B?",
-        opts:["LTE extensions are always faster — they use existing site infrastructure already in place","LTFU tokenization follows patients in routine care without relying on sites, avoiding the cost and attrition of active site follow-up","Both options take the same amount of time and cost","Datavant LTFU only works for oncology trials with breakthrough designation"],
-        correct:1,
-        explain:"LTFU tokenization captures eligible long-term outcomes through routine-care data instead of continued site follow-up — eliminating site monitoring, retention, and patient-contact costs while reducing loss-to-follow-up risk. Unlike LTEs, patients don't need to return to sites.",
+        q:"A sponsor wants long-term safety and HCRU evidence soon after their trial ends. Why does linking the trial cohort to RWD generate it faster than a traditional post-launch RWD study?",
+        opts:["Linked RWD updates in real time, so long-term outcomes are available the moment they occur","Regulators fast-track evidence from tokenized trial cohorts, shortening the review clock","The trial patients are already treated and identified, so linkage can start generating evidence right away — a post-launch study must first wait ~18–24 months for real-world patients to accrue on the drug","Tokenized cohorts need less data harmonization, so any analysis runs faster"],
+        correct:2,
+        explain:"The speed advantage is about the starting point, not the plumbing: the trial cohort has already received the drug, so linkage can begin immediately. A traditional post-launch study must first wait ~18–24 months for enough real-world patients to be treated and accrue outcomes. Claims latency, harmonization effort and regulatory timelines are not shortened by tokenization.",
       },
     ],
   },
   {
     id:"uc2", type:"usecase", num:2, emoji:"📊",
+    how:{
+      subtitle:"Assess whether enrolled trial participants reflect the intended protocol and target labelled population.",
+      example:"link an enrolled heart-failure trial cohort to pre-trial claims and EHR, then compare age, comorbidities and prior therapy against an indicated real-world population to evaluate representativeness and inform regulator / HTA discussions.",
+      flow:[
+        {emoji:"🗂️",label:"INPUT",sub:"Data linked",items:[
+          "Tokenized US trial participants — enrollment/baseline dates, arms/subgroups, eligibility criteria",
+          "Real-world data: open/closed claims, EHR/labs, plus an external indicated cohort",
+        ]},
+        {emoji:"⚙️",label:"WHAT DATAVANT DOES",sub:"Datavant solutions",items:[
+          {t:"Find the trial cohort in RWD",d:"Link tokenized participants to pre-trial RWD to understand their medical history."},
+          {t:"Build a target-population benchmark",d:"Define an external indicated / intended-label cohort with comparable measures."},
+          {t:"Quantify generalizability",d:"Compare RWD-measured baseline characteristics of participants against the benchmark to identify representativeness gaps."},
+        ]},
+        {emoji:"📈",label:"OUTPUT",sub:"Evidence generated",items:[
+          "Evidence the enrolled population reflects the intended / labelled population",
+          "Representativeness gaps by key subgroup — with post-hoc / sensitivity analyses to inform next steps",
+        ],purpose:"For FDA, payer and HTA discussions — pre-empt underrepresentation concerns and support label defense."},
+      ],
+      bottomLine:"Understand representativeness early — and go into regulator / HTA discussions prepared, not reacting at submission.",
+    },
     title:"Trial Representativeness",
-    sub:"Prove your cohort matches the label population",
+    sub:"Show your cohort reflects the intended target (labelled) population",
     timing:"Mid-enrollment (50%, 75%) and at completion",
-    headline:"Prove that your enrolled trial population reflects the patients who will actually receive the drug — before FDA asks.",
-    rwdWhy:"Without linking the trial cohort to RWD, sponsors only know who enrolled based on site reports with no longitudinal clinical context. External validity concerns surface near submission — when enrollment is locked and nothing can be fixed.",
+    headline:"Evaluate whether the enrolled trial population reflects the patient population who will be indicated to receive the drug, minimizing or helping to anticipate downstream regulatory requirements.",
+    rwdWhy:"Linking the enrolled cohort to pre-trial RWD adds the longitudinal clinical history site reports lack — so teams can evaluate how well the enrolled population reflects the intended treated population, and spur post-hoc or sensitivity analyses to inform regulator and HTA discussions.",
     challenges:[
       "Site enrollment reports give limited clinical context — no longitudinal history",
-      "FDA representativeness concerns often surface near submission, when enrollment is locked",
+      "Representativeness concerns from regulators, payers, and HTAs often surface near submission, when enrollment is locked",
       "Unaddressed gaps can trigger post-marketing requirements (PMRs) for subgroups",
     ],
     without:[
       "Rely on site reports with little longitudinal clinical context on enrolled patients",
       "Compare standardized CRF data vs. messy real-world measures — apples to oranges",
-      "Discover representativeness gaps during submission review — too late to adjust enrollment",
+      "Get caught unprepared by a representativeness gap at submission review, with no chance to contextualize it",
     ],
     with:[
-      "Link trial participants to pre-trial RWD for full clinical history (target 90%+ overlap)",
-      "Measure both trial and RW cohorts in RWD for a true apples-to-apples baseline",
-      "Surface representativeness gaps mid-enrollment while teams can still adjust strategy",
+      "Link trial participants to pre-trial RWD for more comprehensive clinical and treatment history",
+      "Measure both trial and RW cohort baseline characteristics in RWD for a true apples-to-apples comparison",
+      "Surface representativeness gaps early — and spur post-hoc or sensitivity analyses to inform internal, regulatory and HTA discussions",
     ],
     value:{ levers:[
       {name:"Support label defense",type:"rev",feasibility:"Medium",detail:"Protect revenue tied to the proposed label by showing enrolled patients match the intended population"},
@@ -113,48 +155,71 @@ const USE_CASES = [
       "Has your regulatory team raised any concerns about enrollment representativeness for your labeled population?",
       "How do you currently assess whether your enrolled patients reflect your intended label population?",
       "Have you faced FDA comments about subgroup representativeness in past submissions?",
+      "Do your payer or HTA teams have representativeness expectations you need to anticipate, not just FDA?",
     ],
     quizzes:[
       {
         q:"A sponsor's regulatory team is worried FDA may challenge their label population. When should Datavant's trial representativeness analysis ideally be run?",
-        opts:["Only after FDA submission when regulators specifically request supporting evidence","Mid-way through enrollment (50%, 75%) and at enrollment completion","Only at Phase III readout once all data are locked","Only when a post-marketing requirement (PMR) is formally issued by FDA"],
+        opts:["Only after FDA submission when regulators specifically request supporting evidence","Mid-way through enrollment (e.g., 50%, 75%) and at enrollment completion","At 100% enrollment","Only when a post-marketing requirement (PMR) is formally issued by FDA"],
         correct:1,
-        explain:"Running analysis mid-enrollment (at 50% and 75%) gives sponsors time to identify gaps and adjust enrollment strategy while enrollment is still open. Waiting until submission means the population is locked — gaps can only be addressed reactively, risking multi-month review delays.",
+        explain:"Running the analysis mid-enrollment (50%, 75%) and at completion gives an early read on representativeness — time to prepare, run post-hoc / sensitivity analyses, and frame the story for regulators, payers and HTAs. Waiting until submission means gaps can only be raised reactively, risking multi-month review delays.",
       },
       {
-        q:"Datavant targets 90%+ overlap when linking trial participants to pre-trial RWD. Why does this overlap rate matter?",
-        opts:["It gives Datavant a larger dataset that increases statistical power for the comparison","It ensures the linked cohort credibly represents the full trial population — not just a subset that may be systematically different","FDA formally requires 90%+ overlap for all representativeness submissions","It reduces Datavant's cost of linkage by minimizing unmatched records"],
+        q:"Why link enrolled trial patients to their pre-trial real-world data?",
+        opts:["To increase the trial's enrollment target","To see each patient's real-world clinical history and evaluate whether the enrolled population reflects the intended treated population","To replace the trial's case report forms","Because regulators require every trial to use real-world data"],
         correct:1,
-        explain:"90%+ overlap is needed so the linked cohort credibly represents the entire trial population. If only 60% can be linked, the unlinked 40% may differ systematically — undermining the very analysis designed to prove representativeness.",
+        explain:"Linking to pre-trial RWD adds the longitudinal clinical history that site enrollment reports lack, so teams can evaluate — and, if needed, contextualize — how well the enrolled population reflects the intended treated population.",
       },
     ],
   },
   {
     id:"uc3", type:"usecase", num:3, emoji:"🛡️",
+    how:{
+      subtitle:"Use pre-trial RWD and external cohorts to contextualize unexpected safety imbalances when speed matters.",
+      example:"an unexpected cardiac event rate shows up in an oncology trial — link patients to their pre-trial history to see whether they already carried higher baseline cardiac risk, and benchmark against a comparable real-world cohort.",
+      flow:[
+        {emoji:"🗂️",label:"INPUT",sub:"Data linked",items:[
+          "Tokenized US trial participants — arm assignment/exposure, baseline dates, safety event definitions",
+          "Real-world data: claims, EHR/labs, mortality, plus an external indicated cohort",
+        ]},
+        {emoji:"⚙️",label:"WHAT DATAVANT DOES",sub:"Datavant solutions",items:[
+          {t:"Assess arm-level baseline risk",d:"Compare participants' pre-trial RWD across trial arms to find imbalance drivers not captured on CRFs."},
+          {t:"Contextualize expected event rates",d:"Use a comparable external cohort to estimate background rates for the observed imbalance."},
+          {t:"Prepare a rapid-response package",d:"Pre-map sources, definitions and harmonization so teams can respond in weeks."},
+        ]},
+        {emoji:"📈",label:"OUTPUT",sub:"Evidence generated",items:[
+          "Whether a safety imbalance reflects baseline risk vs. treatment effect",
+          "Real-world background rates for the event",
+          "A traceable, ready-to-run evidence package",
+        ],purpose:"For fast, credible responses to regulators — protecting trial momentum."},
+      ],
+      bottomLine:"Turn a safety fire drill into a fast, evidence-based answer — because the linkage is already in place.",
+    },
     title:"Safety Contextualization",
     sub:"Contextualize unexpected safety signals fast",
     timing:"At 100% enrollment, interim and final analyses",
     headline:"Contextualize unexpected safety signals in weeks — not months — before they become program-threatening delays.",
-    rwdWhy:"Without pre-established RWD linkage, when an unexpected safety signal emerges, teams scramble for weeks just to access, link, and harmonize data. Meanwhile, regulators are waiting and enrollment may be on hold.",
+    rwdWhy:"RWD linkage helps two ways: it lets you measure the trial population's real-world baseline risk, and it lets you build and confirm a comparable external cohort. Establishing that linkage in advance means you can contextualize an unexpected signal in weeks rather than starting data access from scratch.",
     challenges:[
-      "CRFs rarely capture baseline risk factors for events that weren't anticipated at study design",
-      "Generic external benchmarks may not match the trial population's specific risk profile",
-      "Starting RWD linkage after a signal surfaces loses weeks in data access and harmonization",
+      "Baseline data in the CRF may be too limited to tell whether a surprise safety difference reflects pre-existing patient differences",
+      "A generic external benchmark may not be comparable to your trial population's real-world risk profile",
+      "Without pre-established linkage, there's no fast way to tell whether a signal reflects the drug or the patients",
+      "Starting RWD linkage only after a signal surfaces loses weeks in data access and harmonization",
     ],
     without:[
-      "CRF data doesn't capture risk for surprise events — no trial-specific baseline context",
-      "External benchmarks don't match the trial population risk profile",
-      "Teams scramble for weeks after a signal: data access → linkage → harmonization → analysis",
-      "Enrollment holds accumulate while the response is assembled",
+      "You can't tell if a surprise safety difference is caused by the drug or by patients who were sicker to begin with",
+      "Off-the-shelf benchmarks may not look like your trial patients, so comparisons are easy to challenge",
+      "After a signal appears, it takes weeks to get data access, link it, and line up definitions",
+      "Enrollment can sit on hold while the response is assembled",
     ],
     with:[
-      "Pre-link trial participants to pre-trial clinical history and utilization data",
-      "Use indicated external cohorts to contextualize expected event background rates",
-      "Activate a pre-built rapid-response package — respond to regulators in weeks",
-      "Show whether a safety difference reflects baseline risk vs. true treatment effect",
+      "See each patient's real-world history before the trial, so you can check whether baseline risk — not the drug — explains a signal",
+      "Build and confirm an external cohort that actually resembles your trial population",
+      "Because linkage is set up in advance, respond to regulators in weeks, not months",
+      "Show whether a safety difference reflects patient baseline risk or a true treatment effect",
     ],
     value:{ levers:[
-      {name:"Program protection",type:"rev",feasibility:"Medium",detail:"Contextualize whether a safety difference is treatment-related or pre-existing, protecting the program from avoidable delay or narrowing"},
+      {name:"Program protection",type:"rev",feasibility:"Medium",detail:"Evaluate whether a safety difference is treatment-related or related to unanticipated differences in patient baseline characteristics, protecting the program from avoidable delay or narrowing"},
       {name:"Avoid enrollment hold",type:"cost",feasibility:"Medium",detail:"Faster contextual response may prevent a hold or restart enrollment sooner, reducing site and vendor burn"},
       {name:"Avoid PMR(C)",type:"cost",feasibility:"Medium",detail:"Answer safety questions with existing linked data, potentially avoiding a new follow-up study"},
     ]},
@@ -165,19 +230,19 @@ const USE_CASES = [
     ],
     quizzes:[
       {
-        q:"A Phase III oncology trial flags an unexpected cardiac safety signal at interim analysis. Datavant RWD linkage was NOT pre-established. What happens?",
-        opts:["The team immediately accesses linked RWD and prepares a regulatory response within 2 weeks","The team loses weeks to data access negotiations, linkage, harmonization, and protocol development before any analysis can begin","Datavant's existing ecosystem automatically contextualizes the signal without pre-established linkage","FDA grants an automatic extension for safety signals — standard regulatory practice"],
+        q:"An unexpected safety signal appears in a trial. What does linking the trial to RWD add beyond simply comparing to an external real-world cohort?",
+        opts:["Nothing — an external cohort already answers every question","It lets you check whether the trial patients' own pre-existing baseline risk explains the signal, and confirm the external cohort is truly comparable","It replaces the need for a safety analysis","It guarantees regulators will not ask any questions"],
         correct:1,
-        explain:"Without pre-established linkage, teams start from scratch: negotiating data access contracts, building linkage infrastructure, harmonizing event definitions. This process takes weeks to months — during which regulators are waiting and enrollment may be on hold.",
+        explain:"An external real-world cohort can give a background rate, but linkage is what lets you evaluate the trial patients' own baseline risk and confirm the external cohort is comparable — the added layer, not a requirement to contextualize at all.",
       },
       {
-        q:"What is Datavant's 'rapid-response package' for safety contextualization?",
-        opts:["A pre-approved FDA response letter template for common safety signals","Pre-mapped data sources, safety event definitions, and harmonization logic — ready to activate when a signal surfaces","A real-time safety monitoring dashboard for trial investigators and DSMBs","A pre-funded insurance policy that reimburses sponsors for enrollment hold costs"],
+        q:"How does establishing RWD linkage in advance help contextualize an unexpected safety signal?",
+        opts:["It files the regulatory response automatically","It lets the team measure the trial population's real-world baseline risk and confirm a comparable external cohort — quickly, because the linkage is already in place","It removes the need for a control arm in every trial","It lowers the trial's enrollment target"],
         correct:1,
-        explain:"The rapid-response package pre-maps data sources, safety event definitions, and harmonization logic in advance. When a signal surfaces, teams activate within days rather than spending weeks building infrastructure. It turns a fire drill into a controlled, evidence-based regulatory response.",
+        explain:"Linkage set up in advance means the team can immediately assess baseline risk and comparator comparability when a signal appears — turning a weeks-long scramble into a fast, evidence-based response.",
       },
       {
-        q:"Why does pre-established RWD linkage matter most for late-stage Phase III programs specifically?",
+        q:"Why does establishing RWD linkage in advance matter most for late-stage Phase III programs?",
         opts:["Phase III trials have fewer patients, so RWD fills sample size gaps","Late-stage programs have the most to lose from an unexpected safety signal — delayed or narrowed approval has major downstream impact","Regulators only review RWD evidence for Phase III trials and above","Phase III is when CRF data quality deteriorates and RWD is needed as a backup"],
         correct:1,
         explain:"Late-stage Phase III programs represent years of investment and significant future revenue potential. An unexpected safety signal at this stage — without fast contextualization — can result in delayed approval, label narrowing, or enrollment holds. Pre-established linkage is the 'insurance policy' that enables a fast, evidence-based response.",
@@ -186,14 +251,41 @@ const USE_CASES = [
   },
   {
     id:"uc4", type:"usecase", num:4, emoji:"⚖️",
+    primer:{
+      terms:[
+        {t:"Single-arm trial",d:"A trial with no built-in control group — every participant receives the drug. Used when a randomized comparison isn't feasible or ethical (e.g., many rare diseases and some oncology settings)."},
+        {t:"External control arm (ECA)",d:"A comparison group built from outside the trial — usually real-world data (claims, EHR, registries) — to stand in for the missing control arm and show the treatment's benefit."},
+      ],
+      note:"Datavant can build an ECA from RWD without tokenizing the trial. Tokenizing lets you measure the trial patients and the ECA on the same basis — which is what makes the comparison defensible to regulators.",
+    },
+    how:{
+      subtitle:"Compare treated trial patients and external controls in RWD to strengthen ECA interpretability.",
+      example:"for a single-arm oncology trial, link the treated patients to RWD and compare their baseline characteristics against the external control cohort to show the two are comparable before submission.",
+      flow:[
+        {emoji:"🗂️",label:"INPUT",sub:"Data linked",items:[
+          "Tokenized US trial participants — index/baseline dates, treatment arm/exposure, ECA-relevant covariates",
+          "Real-world data: the ECA source data, claims, EHR (+ abstraction), labs",
+        ]},
+        {emoji:"⚙️",label:"WHAT DATAVANT DOES",sub:"Datavant solutions",items:[
+          {t:"Characterize trial participants in RWD",d:"Link tokenized participants to RWD to capture their baseline characteristics."},
+          {t:"Assess ECA comparability",d:"Compare baseline characteristics between the linked trial cohort and the external control cohort to find comparability gaps."},
+          {t:"Strengthen ECA interpretation",d:"Identify comparability gaps and guide the adjustment strategy."},
+        ]},
+        {emoji:"📈",label:"OUTPUT",sub:"Evidence generated",items:[
+          "A defensible, apples-to-apples comparison of treated vs. external-control patients",
+          "Comparability gaps identified before submission",
+        ],purpose:"For FDA, payer and HTA review of single-arm and comparator-arm evidence."},
+      ],
+      bottomLine:"Show the external control really is comparable — before a reviewer asks.",
+    },
     title:"ECA Comparability",
-    sub:"Create apples-to-apples external controls",
+    sub:"Create an external control arm that is comparable to the treated arm",
     timing:"At 100% enrollment, interim and final analyses",
     headline:"Prove your external control patients are truly comparable to your trial patients — using the same RWD measurement basis for both.",
-    rwdWhy:"Without linking the trial cohort to RWD, sponsors compare standardized CRF trial data against messy routine-care external control data. Regulators see this as apples-to-oranges — and challenge it, especially for single-arm trials where the ECA is the only comparator.",
+    rwdWhy:"A single-arm trial has no internal control group, so sponsors build an external control arm (ECA) from real-world data to show the treatment's benefit. Datavant can build that ECA from linked RWD without tokenizing the trial — but the ECA must be defensibly comparable to the treated patients. Tokenizing the trial lets both arms be measured on the same RWD basis, which is what makes that comparability credible to regulators, especially where the ECA is the only comparator.",
     challenges:[
       "CRF trial variables are standardized; external control RWD is captured in noisy routine care — inherently incomparable",
-      "Single-arm trial sponsors often lack the evidence depth FDA requires to defend ECA populations",
+      "Sponsors conducting single-arm trials often lack the evidence depth regulators require to defend ECA populations",
       "Comparability gaps discovered during FDA review require expensive rework and resubmission",
     ],
     without:[
@@ -202,7 +294,7 @@ const USE_CASES = [
       "Discover comparability gaps during review — leading to rework, delay, or resubmission",
     ],
     with:[
-      "Link trial participants to RWD, then measure both cohorts using the same RWD baseline",
+      "Link trial participants to RWD to characterize and balance both the treated arm and the RWD comparator cohort using harmonized baseline measures",
       "Create a true apples-to-apples comparison that is defensible to FDA and HTA bodies",
       "Identify and close comparability gaps before submission — no surprises at review",
     ],
@@ -215,6 +307,7 @@ const USE_CASES = [
       "Are any of your pipeline assets planning a single-arm design with an external control arm?",
       "How are you currently planning to demonstrate that your external control patients are truly comparable to your trial patients?",
       "Has FDA ever challenged your ECA population or asked for additional comparability evidence?",
+      "Have you checked whether any of your external control patients also appear in your trial cohort?",
     ],
     quizzes:[
       {
@@ -225,22 +318,42 @@ const USE_CASES = [
       },
       {
         q:"Which trial type benefits most from Datavant's ECA comparability offering, and why?",
-        opts:["Large Phase III RCTs with 1,000+ patients in both arms — largest data footprint","Phase I dose-escalation trials — earliest opportunity to establish external control infrastructure","Single-arm trials in rare disease or oncology where no concurrent control is feasible and ECA is the only comparator","Phase II biomarker studies with no primary efficacy endpoint"],
+        opts:["Large Phase III RCTs with 1,000+ patients in both arms — largest data footprint","Phase I dose-escalation trials — earliest opportunity to establish external control infrastructure","Single-arm trials where no concurrent control is feasible and the ECA is the only comparator","Phase II biomarker studies with no primary efficacy endpoint"],
         correct:2,
-        explain:"Single-arm trials in rare disease or oncology rely entirely on ECAs to demonstrate treatment benefit — it's their only comparator. FDA requires strong evidence that the ECA is truly comparable to the trial population. Datavant uniquely provides this by measuring both populations using the same RWD baseline.",
+        explain:"Single-arm trials rely entirely on ECAs to demonstrate treatment benefit — it's their only comparator. Regulators require strong evidence that the ECA is truly comparable to the trial population. Datavant provides this by measuring both populations on the same RWD baseline.",
       },
     ],
   },
   {
     id:"uc5", type:"usecase", num:5, emoji:"🔍",
+    how:{
+      subtitle:"Detect and remove overlap across sites, trial phases, different trials and external cohorts before duplicate follow-up and skewed analyses accumulate.",
+      example:"compare tokens across a sponsor's trials and sites to flag a participant enrolled in two studies at once, before duplicate follow-up and skewed analyses pile up.",
+      flow:[
+        {emoji:"🗂️",label:"INPUT",sub:"Tokens compared",items:[
+          "Tokenized trial participants — site IDs, trial phase, ECA / registry tokens, cohort membership files",
+          "Comparison set: other sites, phases and trials; external control and registry sources; multi-source RWD cohorts",
+        ]},
+        {emoji:"⚙️",label:"WHAT DATAVANT DOES",sub:"Datavant solutions",items:[
+          {t:"Identify participant overlap",d:"Quantify overlap across sites, trials, phases and external cohorts."},
+          {t:"Detect duplicate participants",d:"Find and flag multi-enrolled or professional patients across sites, trials, phases and sources."},
+        ]},
+        {emoji:"📈",label:"OUTPUT",sub:"Evidence generated",items:[
+          "Duplicate and professional participants flagged across sites, trials and phases",
+          "Clean, defensible analysis populations",
+          "Follow-up spend avoided for patients who shouldn't be counted",
+        ],purpose:"For study integrity and cost control — before analyses lock."},
+      ],
+      bottomLine:"Catch the same patient in two places early — before duplicate costs and skewed analyses add up.",
+    },
     title:"Trial Patient Deduplication",
-    sub:"Remove duplicate patients before they cost you",
-    timing:"Mid-Phase I / Early Phase II",
-    headline:"Detect participants enrolled in multiple trials before duplicate follow-up costs accumulate and evidence integrity is compromised.",
+    sub:"Detect duplicate patients early",
+    timing:"Periodically during enrollment (25/50/75/100%)",
+    headline:"Detect the same participant enrolled across sites, trial phases and different trials before duplicate follow-up costs accumulate and evidence integrity is compromised",
     rwdWhy:"Without tokenized linkage across sites, trials, and phases, sponsors have no scalable way to detect participants enrolled in multiple studies. Professional trial participants deliberately conceal multi-enrollment. Manual site checks never span cross-trial or cross-program overlap.",
     challenges:[
       "Professional participants and duplicate enrollees rarely self-disclose overlapping trial participation",
-      "Siloed site checks don't span across trials, phases, programs, or ECA cohorts",
+      "Siloed site checks don't span across trials, phases, or programs",
       "Undetected duplicates distort eligibility, safety, and outcome analyses — creating regulatory risk",
     ],
     without:[
@@ -250,10 +363,10 @@ const USE_CASES = [
       "Pay per-patient follow-up costs for duplicate patients over years of follow-up",
     ],
     with:[
-      "Use tokens to find duplicates across all sites, trials, phases, and cohorts — without moving PII",
+      "Detect the same participant across sites, trial phases and different trials — using tokens, not direct identifiers",
       "Identify multi-enrolled and professional participants before they affect analyses",
       "Protect study integrity with clean, defensible analysis populations for regulators",
-      "Eliminate wasted follow-up spend by acting at Phase I / Early Phase II",
+      "Eliminate wasted follow-up spend by acting early — periodically during enrollment",
     ],
     value:{ levers:[
       {name:"Cost avoidance",type:"cost",feasibility:"High",detail:"Remove duplicate patients early — stop paying per-patient follow-up costs for patients who shouldn't be counted"},
@@ -262,18 +375,18 @@ const USE_CASES = [
     discoveryQs:[
       "How confident are you that patients in your current trials aren't enrolled in multiple arms or competing studies?",
       "What's your current process for detecting duplicate or professional trial participants across sites?",
-      "Has your team ever found unexpected overlap between a trial cohort and an ECA cohort?",
+      "How would you know today if the same patient enrolled at more than one of your trial sites?",
     ],
     quizzes:[
       {
         q:"How does Datavant's trial patient deduplication protect patient privacy while detecting duplicate enrollment across sites and trials?",
-        opts:["All patient data is fully anonymized using k-anonymity techniques before sharing","Tokens — cryptographic representations of patient identity — detect overlap across sites and trials without moving or revealing any identifiable data","A neutral third-party privacy auditor reviews all matching results before sharing","Only aggregate overlap statistics are shared — individual records are never identified"],
+        opts:["All patient data is fully anonymized using k-anonymity techniques before sharing","Tokens can be used to detect overlap across sites without having to compare direct identifiers","A neutral third-party privacy auditor reviews all matching results before sharing","Only aggregate overlap statistics are shared — individual records are never identified"],
         correct:1,
-        explain:"Datavant converts patient PII into a cryptographic token at the source. These tokens can be compared across sites, trials, and phases to identify overlap WITHOUT any identifiable data ever leaving its source system. This is the fundamental privacy-preserving advantage of Datavant's tokenization approach.",
+        explain:"Datavant converts patient PII into a cryptographic token. Tokens can be compared across sites and studies to detect overlap without sharing or comparing direct identifiers across parties. This is the privacy-preserving advantage of tokenization.",
       },
       {
-        q:"When is the optimal time to run trial patient deduplication, and what is the primary reason?",
-        opts:["At Phase III readout — when all patients have completed follow-up and duplicates can be fully identified","After database lock — to ensure the cleanest possible analysis dataset for submission","Mid-Phase I / Early Phase II — before duplicate follow-up costs accumulate and while analyses can still be adjusted","During FDA review — to proactively respond to any integrity questions from reviewers"],
+        q:"When is the best time to use tokens to detect duplicate patients, and what is the primary reason?",
+        opts:["At Phase III completion — when all patients have completed follow-up and duplicates can be fully identified","After database lock — to ensure the cleanest possible analysis dataset for submission","Periodically during enrollment (e.g., at 25%, 50%, 75% and 100% enrollment), before duplicate follow-up costs accumulate and before trial analyses are finalized","During FDA review — to proactively respond to any integrity questions from reviewers"],
         correct:2,
         explain:"Mid-Phase I / Early Phase II is optimal because acting early prevents duplicate follow-up costs from compounding across years of the study. Early action also protects study integrity before duplicates can distort interim analyses or eligibility assessments.",
       },
@@ -287,7 +400,7 @@ const EXAM_QUESTIONS = [
   // UC1 · Long-Term Follow-Up
   {
     uc:"Long-Term Follow-Up",
-    q:"After readout, a sponsor has several evidence questions to answer — payer HCRU, durability, and a safety sub-analysis. Why is linking the trial cohort to RWD once especially efficient here?",
+    q:"After trial completion, a sponsor has several evidence questions to answer — payer HCRU, durability, and a safety sub-analysis. Why is linking the trial cohort to RWD once especially efficient here?",
     opts:[
       "Each question still requires a brand-new cohort linked from scratch",
       "One linked trial-RWD cohort can be reused across multiple evidence-generation studies, avoiding repeated linkage and setup",
@@ -307,12 +420,12 @@ const EXAM_QUESTIONS = [
       "The cost of running the primary trial itself",
     ],
     correct:1,
-    explain:"Because tokenization links the existing trial participants to routine-care data at readout, teams begin generating long-term evidence immediately instead of waiting 18–24 months for post-launch accrual.",
+    explain:"Because tokenization links the existing trial participants to routine-care data at trial completion, teams begin generating long-term evidence immediately instead of waiting 18–24 months for post-launch accrual.",
   },
   // UC2 · Trial Representativeness
   {
     uc:"Trial Representativeness",
-    q:"A sponsor ignores representativeness until FDA submission, and a gap then surfaces for a key subgroup. What is a likely consequence?",
+    q:"A sponsor ignores representativeness until regulatory submission, and a gap then surfaces for a key subgroup. What is a likely consequence?",
     opts:[
       "FDA approves automatically with no conditions",
       "A post-marketing requirement (PMR) to study the under-represented subgroup, plus possible review delay",
@@ -362,7 +475,7 @@ const EXAM_QUESTIONS = [
   // UC4 · ECA Comparability
   {
     uc:"ECA Comparability",
-    q:"Besides satisfying FDA, who else gains confidence when a sponsor proves ECA comparability using the same RWD basis for both arms?",
+    q:"Besides satisfying the regulatory agency, who else gains confidence when a sponsor proves ECA comparability using the same RWD basis for both arms?",
     opts:[
       "The trial's clinical site coordinators",
       "Payers and HTA bodies evaluating the treatment's benefit",
@@ -374,9 +487,9 @@ const EXAM_QUESTIONS = [
   },
   {
     uc:"ECA Comparability",
-    q:"What happens if a single-arm sponsor waits until FDA review to discover their external control population isn't comparable?",
+    q:"What happens if a sponsor conducting a single-arm trial waits until regulatory review to discover their external control population isn't comparable?",
     opts:[
-      "FDA adjusts the analysis for them at no cost",
+      "The regulatory agency adjusts the analysis for them at no cost",
       "They face expensive rework, delay, and possible resubmission",
       "The external control is accepted automatically anyway",
       "The trial retroactively converts to a randomized design",
@@ -392,7 +505,7 @@ const EXAM_QUESTIONS = [
       "Sites are not permitted to keep enrollment records",
       "They are siloed to one study and rely on self-disclosure — they don't span across trials, phases, and programs, and professional participants conceal multi-enrollment",
       "Duplicate enrollment is actually impossible",
-      "FDA prohibits checking for duplicates",
+      "Regulators prohibit checking for duplicates",
     ],
     correct:1,
     explain:"Site checks cover a single study and depend on honesty. Tokenized linkage detects overlap across trials, phases, and programs without moving PII — something manual checks cannot do.",
@@ -418,7 +531,8 @@ const ALL_MODS = [INTRO, ...USE_CASES];
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function getSteps(mod) {
   if (mod.type === "intro") return ["overview"];
-  return ["why", "story", "value", ...mod.quizzes.map((_,i) => `q${i}`)];
+  const base = mod.how ? ["why","how","story","value"] : ["why","story","value"];
+  return [...base, ...mod.quizzes.map((_,i) => `q${i}`)];
 }
 function isQuizStep(key){ return key.startsWith("q"); }
 function qIdx(key){ return parseInt(key.slice(1)); }
@@ -459,7 +573,7 @@ function Landing({onStart}){
             ))}
           </div>
           <div style={{display:"flex",justifyContent:"center",gap:0,background:"rgba(255,255,255,.06)",borderRadius:14,padding:"16px 0",maxWidth:400,margin:"0 auto 36px"}}>
-            {[{icon:"🧩",val:"5",lbl:"Use Cases"},{icon:"✍️",val:TOTAL_Q,lbl:"Quiz Questions"},{icon:"⏱",val:"~30 min",lbl:"Total Time"}].map((s,i)=>(
+            {[{icon:"🧩",val:"5",lbl:"Use Cases"},{icon:"✍️",val:TOTAL_Q,lbl:"Quiz Questions"},{icon:"⏱️",val:"~30 min",lbl:"Total Time"}].map((s,i)=>(
               <div key={i} style={{flex:1,textAlign:"center",borderRight:i<2?"1px solid rgba(255,255,255,.1)":"none"}}>
                 <div style={{fontSize:18,marginBottom:2}}>{s.icon}</div>
                 <div style={{fontSize:22,fontWeight:800,color:DV.white}}>{s.val}</div>
@@ -484,7 +598,7 @@ function OverviewStep({onJumpToUC}){
       {/* Evidence problem summary */}
       <div style={{background:DV.navy,borderRadius:16,padding:"22px 28px",marginBottom:16}}>
         <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,.45)",letterSpacing:".1em",textTransform:"uppercase",marginBottom:8}}>Why Trial Tokenization?</div>
-        <h2 style={{fontSize:18,fontWeight:800,color:DV.white,letterSpacing:"-.02em",marginBottom:10}}>Sponsors need evidence that primary trials don't provide</h2>
+        <h2 style={{fontSize:18,fontWeight:800,color:DV.white,letterSpacing:"-.02em",marginBottom:10}}>Sponsors need evidence that clinical trials don't provide</h2>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
           {INTRO.problems.map((p,i)=>(
             <div key={i} style={{background:"rgba(255,255,255,.07)",borderRadius:8,padding:"10px 14px",borderLeft:"3px solid rgba(0,194,212,.5)"}}>
@@ -495,15 +609,14 @@ function OverviewStep({onJumpToUC}){
         </div>
       </div>
 
-      {/* Clickable use case cards — original 3-col layout */}
-      <div style={{marginBottom:14}}>
+      {/* Clickable use case cards — original 3-col layout (reverted per feedback) */}
+      <div style={{marginBottom:16}}>
         <div style={{fontSize:12,fontWeight:700,color:DV.slate,letterSpacing:".08em",textTransform:"uppercase",marginBottom:10}}>
           5 Use Cases You'll Master · Click any to jump →
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
           {USE_CASES.map(uc=>(
-            <div key={uc.id} onClick={()=>onJumpToUC(uc.id)}
-              className="uc-card"
+            <div key={uc.id} onClick={()=>onJumpToUC(uc.id)} className="uc-card"
               style={{background:DV.card,borderRadius:12,padding:"16px",boxShadow:"0 2px 8px rgba(0,0,0,.06)",borderLeft:`4px solid ${DV.cobalt}`,cursor:"pointer"}}>
               <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
                 <span style={{fontSize:24}}>{uc.emoji}</span>
@@ -513,6 +626,35 @@ function OverviewStep({onJumpToUC}){
               <div style={{fontSize:12,color:DV.sub}}>{uc.sub}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Separate trial-timeline visual (added per feedback) */}
+      <div style={{background:DV.navy,borderRadius:14,padding:"16px 18px",marginBottom:16}}>
+        <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,.55)",letterSpacing:".08em",textTransform:"uppercase",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
+          <span>Where each use case fits on the trial timeline</span>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
+          {[
+            {ph:"During enrollment",ids:["uc2","uc5"]},
+            {ph:"Interim / final analysis",ids:["uc3","uc4"]},
+            {ph:"After trial completion",ids:["uc1"]},
+          ].map((col,i)=>(
+            <div key={i} style={{textAlign:"center"}}>
+              <div style={{height:4,background:"linear-gradient(90deg,rgba(0,194,212,.6),rgba(27,52,144,.6))",borderRadius:3,marginBottom:8}}/>
+              <div style={{fontSize:11,fontWeight:800,color:DV.teal,marginBottom:8}}>{col.ph}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6,justifyContent:"center"}}>
+                {col.ids.map(id=>{ const uc=USE_CASES.find(u=>u.id===id); return(
+                  <span key={id} onClick={()=>onJumpToUC(id)} style={{cursor:"pointer",background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.18)",borderRadius:16,padding:"4px 10px",fontSize:11,color:"#fff",display:"inline-flex",alignItems:"center",gap:5}}>
+                    <span>{uc.emoji}</span><span>UC {uc.num} · {uc.title}</span>
+                  </span>
+                );})}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",fontSize:9,color:"rgba(255,255,255,.4)",marginTop:10}}>
+          <span>Enrollment →</span><span>Analysis →</span><span>Post-completion</span>
         </div>
       </div>
 
@@ -532,7 +674,7 @@ function WhyStep({mod}){
         <div style={{position:"absolute",right:"-20px",top:"-20px",width:140,height:140,borderRadius:"50%",background:"rgba(255,255,255,.04)"}}/>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
           <span style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.2)",borderRadius:20,padding:"4px 12px",fontSize:11,color:"rgba(255,255,255,.8)",fontWeight:700,letterSpacing:".06em",textTransform:"uppercase"}}>Use Case {mod.num}</span>
-          <span style={{background:"rgba(0,194,212,.2)",border:"1px solid rgba(0,194,212,.3)",borderRadius:20,padding:"4px 12px",fontSize:11,color:DV.teal,fontWeight:600}}>⏱ {mod.timing}</span>
+          <span style={{background:"rgba(0,194,212,.2)",border:"1px solid rgba(0,194,212,.3)",borderRadius:20,padding:"4px 12px",fontSize:11,color:DV.teal,fontWeight:600}}>⏱️ {mod.timing}</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:12}}>
           <span style={{fontSize:44}}>{mod.emoji}</span>
@@ -540,6 +682,18 @@ function WhyStep({mod}){
         </div>
         <p style={{fontSize:15,color:"rgba(255,255,255,.75)",lineHeight:1.65,margin:0}}>{mod.headline}</p>
       </div>
+      {mod.primer && (
+        <div style={{background:"#FFF7E6",border:`1px solid #F5D98B`,borderRadius:12,padding:"14px 18px",marginBottom:14}}>
+          <div style={{fontSize:11,fontWeight:800,color:"#92400E",letterSpacing:".06em",textTransform:"uppercase",marginBottom:10}}>First, the basics</div>
+          {mod.primer.terms.map((tm,i)=>(
+            <div key={i} style={{display:"flex",gap:12,marginBottom:i<mod.primer.terms.length-1?10:0,alignItems:"flex-start"}}>
+              <span style={{fontSize:12.5,fontWeight:800,color:DV.cobalt,flexShrink:0,width:150}}>{tm.t}</span>
+              <p style={{fontSize:13,color:DV.text,lineHeight:1.55,margin:0}}>{tm.d}</p>
+            </div>
+          ))}
+          {mod.primer.note && <p style={{fontSize:13,color:"#78350F",lineHeight:1.55,margin:"12px 0 0",fontWeight:600}}>{mod.primer.note}</p>}
+        </div>
+      )}
       <div style={{background:DV.card,borderRadius:12,padding:"20px 24px",marginBottom:14,boxShadow:"0 2px 8px rgba(0,0,0,.05)"}}>
         <div style={{fontSize:12,fontWeight:700,color:DV.slate,letterSpacing:".08em",textTransform:"uppercase",marginBottom:12}}>The Sponsor Challenge</div>
         {mod.challenges.map((c,i)=>(
@@ -557,6 +711,64 @@ function WhyStep({mod}){
             <p style={{fontSize:14,color:DV.text,lineHeight:1.7,margin:0,fontWeight:500}}>{mod.rwdWhy}</p>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── How Step (rep-friendly "How this works")
+function HowStep({mod}){
+  const h=mod.how;
+  const bar=[DV.cobalt,DV.teal,DV.mint];
+  const tone=["#EEF4FF","#E8FBFD","#EAF7EE"];
+  return(
+    <div className="step" style={{maxWidth:900,margin:"0 auto"}}>
+      <div style={{textAlign:"center",marginBottom:12}}>
+        <div style={{fontSize:11,fontWeight:700,color:DV.slate,letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>Use Case {mod.num} · {mod.title}</div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
+          <h2 style={{fontSize:22,fontWeight:800,color:DV.text,letterSpacing:"-.02em"}}>How This Works</h2>
+        </div>
+        <p style={{fontSize:13.5,color:DV.sub,marginTop:4,maxWidth:640,marginLeft:"auto",marginRight:"auto"}}>{h.subtitle}</p>
+      </div>
+
+      <div style={{background:DV.bg,border:`1px solid ${DV.border}`,borderRadius:12,padding:"11px 16px",marginBottom:16}}>
+        <div style={{fontSize:10,fontWeight:800,color:DV.slate,letterSpacing:".08em",textTransform:"uppercase",marginBottom:3}}>Example</div>
+        <p style={{fontSize:14,color:DV.text,lineHeight:1.55,margin:0,fontWeight:600}}>{h.example}</p>
+      </div>
+
+      <div style={{display:"flex",alignItems:"stretch",gap:6,marginBottom:16}}>
+        {h.flow.map((col,i)=>(
+          <React.Fragment key={i}>
+            <div style={{flex:1,background:DV.card,border:`1px solid ${DV.border}`,borderRadius:14,overflow:"hidden",boxShadow:"0 2px 8px rgba(0,0,0,.05)",display:"flex",flexDirection:"column"}}>
+              <div style={{background:bar[i],padding:"9px 14px"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{col.emoji} {col.label}</div>
+                <div style={{fontSize:10.5,color:"rgba(255,255,255,.85)"}}>{col.sub}</div>
+              </div>
+              <div style={{padding:"13px",background:tone[i],flex:1}}>
+                {col.items.map((it,j)=>(
+                  <div key={j} style={{display:"flex",gap:8,marginBottom:j<col.items.length-1?9:0,alignItems:"flex-start"}}>
+                    <span style={{color:bar[i],fontSize:11,marginTop:3,flexShrink:0}}>●</span>
+                    {typeof it==="object"
+                      ? <div><div style={{fontSize:12.5,fontWeight:800,color:DV.text,marginBottom:1}}>{it.t}</div><p style={{fontSize:12,color:DV.sub,lineHeight:1.45,margin:0}}>{it.d}</p></div>
+                      : <p style={{fontSize:12.5,color:DV.text,lineHeight:1.5,margin:0}}>{it}</p>}
+                  </div>
+                ))}
+                {col.purpose && (
+                  <div style={{marginTop:11,paddingTop:9,borderTop:`1px dashed ${DV.border}`}}>
+                    <div style={{fontSize:10,fontWeight:800,color:bar[i],letterSpacing:".06em",textTransform:"uppercase",marginBottom:3}}>For</div>
+                    <p style={{fontSize:12.5,color:DV.text,lineHeight:1.5,margin:0,fontWeight:600}}>{col.purpose}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            {i<h.flow.length-1 && <div style={{display:"flex",alignItems:"center",fontSize:22,color:DV.slate,fontWeight:800}}>→</div>}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div style={{background:DV.navy,borderRadius:12,padding:"12px 18px",display:"flex",gap:12,alignItems:"center"}}>
+        <span style={{fontSize:11,fontWeight:800,color:DV.teal,letterSpacing:".08em",textTransform:"uppercase",flexShrink:0}}>Bottom line</span>
+        <p style={{fontSize:13.5,color:"#fff",lineHeight:1.5,margin:0,fontWeight:600}}>{h.bottomLine}</p>
       </div>
     </div>
   );
@@ -635,7 +847,7 @@ function ValueStep({mod}){
       <div style={{textAlign:"center",marginBottom:20}}>
         <div style={{fontSize:11,fontWeight:700,color:DV.slate,letterSpacing:".1em",textTransform:"uppercase",marginBottom:6}}>Use Case {mod.num} · {mod.title}</div>
         <h2 style={{fontSize:22,fontWeight:800,color:DV.text,letterSpacing:"-.02em"}}>Where Datavant Creates Value</h2>
-        <p style={{fontSize:14,color:DV.sub,marginTop:4}}>Value levers and feasibility — use these to qualify and size opportunities with your clients.</p>
+        <p style={{fontSize:14,color:DV.sub,marginTop:4}}>Potential value levers to unlock — use these to frame the opportunity with your clients.</p>
       </div>
 
       {/* Revenue levers */}
@@ -644,12 +856,11 @@ function ValueStep({mod}){
           <div style={{fontSize:11,fontWeight:700,color:"#166534",letterSpacing:".08em",textTransform:"uppercase",marginBottom:8,paddingLeft:4}}>📈 Revenue Levers</div>
           <div style={{background:DV.card,borderRadius:12,overflow:"hidden",boxShadow:"0 2px 8px rgba(0,0,0,.05)"}}>
             {revLevers.map((l,i)=>(
-              <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto",padding:"13px 16px",borderBottom:i<revLevers.length-1?`1px solid ${DV.border}`:"none",background:DV.revBg,gap:12,alignItems:"center"}}>
+              <div key={i} style={{display:"grid",gridTemplateColumns:"1fr",padding:"13px 16px",borderBottom:i<revLevers.length-1?`1px solid ${DV.border}`:"none",background:DV.revBg,gap:12,alignItems:"center"}}>
                 <div>
                   <div style={{fontSize:13,fontWeight:700,color:DV.text,marginBottom:3}}>{l.name}</div>
                   <div style={{fontSize:12,color:DV.sub,lineHeight:1.5}}>{l.detail}</div>
                 </div>
-                <Feasibility level={l.feasibility}/>
               </div>
             ))}
           </div>
@@ -662,12 +873,11 @@ function ValueStep({mod}){
           <div style={{fontSize:11,fontWeight:700,color:"#92400E",letterSpacing:".08em",textTransform:"uppercase",marginBottom:8,paddingLeft:4}}>💰 Cost Levers</div>
           <div style={{background:DV.card,borderRadius:12,overflow:"hidden",boxShadow:"0 2px 8px rgba(0,0,0,.05)"}}>
             {costLevers.map((l,i)=>(
-              <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto",padding:"13px 16px",borderBottom:i<costLevers.length-1?`1px solid ${DV.border}`:"none",background:DV.costBg,gap:12,alignItems:"center"}}>
+              <div key={i} style={{display:"grid",gridTemplateColumns:"1fr",padding:"13px 16px",borderBottom:i<costLevers.length-1?`1px solid ${DV.border}`:"none",background:DV.costBg,gap:12,alignItems:"center"}}>
                 <div>
                   <div style={{fontSize:13,fontWeight:700,color:DV.text,marginBottom:3}}>{l.name}</div>
                   <div style={{fontSize:12,color:DV.sub,lineHeight:1.5}}>{l.detail}</div>
                 </div>
-                <Feasibility level={l.feasibility}/>
               </div>
             ))}
           </div>
@@ -1137,6 +1347,7 @@ export default function App(){
   function renderStep(){
     if(stepKey==="overview") return <OverviewStep onJumpToUC={jumpToUC}/>;
     if(stepKey==="why") return <WhyStep mod={mod}/>;
+    if(stepKey==="how") return <HowStep mod={mod}/>;
     if(stepKey==="story") return <StoryStep mod={mod}/>;
     if(stepKey==="value") return <ValueStep mod={mod}/>;
     if(isQuizStep(stepKey)){
@@ -1148,6 +1359,7 @@ export default function App(){
   function stepLabel(key){
     if(key==="overview") return "Overview";
     if(key==="why") return "Why";
+    if(key==="how") return "How";
     if(key==="story") return "Approach";
     if(key==="value") return "Value";
     if(isQuizStep(key)) return `Q${qIdx(key)+1}`;
