@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { useUser } from "@clerk/clerk-react";
 
 const DV = {
@@ -738,7 +738,7 @@ function HowStep({mod}){
 
       <div style={{display:"flex",alignItems:"stretch",gap:6,marginBottom:16}}>
         {h.flow.map((col,i)=>(
-          <React.Fragment key={i}>
+          <Fragment key={i}>
             <div style={{flex:1,background:DV.card,border:`1px solid ${DV.border}`,borderRadius:14,overflow:"hidden",boxShadow:"0 2px 8px rgba(0,0,0,.05)",display:"flex",flexDirection:"column"}}>
               <div style={{background:bar[i],padding:"9px 14px"}}>
                 <div style={{fontSize:11,fontWeight:800,color:"#fff",letterSpacing:".06em"}}>{col.emoji} {col.label}</div>
@@ -762,7 +762,7 @@ function HowStep({mod}){
               </div>
             </div>
             {i<h.flow.length-1 && <div style={{display:"flex",alignItems:"center",fontSize:22,color:DV.slate,fontWeight:800}}>→</div>}
-          </React.Fragment>
+          </Fragment>
         ))}
       </div>
 
